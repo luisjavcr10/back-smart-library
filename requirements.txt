@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg[binary]
+python-dotenv
+pydantic
+pydantic-settings
+asyncio-mqtt
