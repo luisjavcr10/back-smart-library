@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import asyncio
 from app.core.config import settings
@@ -38,6 +39,16 @@ app = FastAPI(
     openapi_tags=tags_metadata,
     lifespan=lifespan
 )
+
+# Configuración de CORS (Permitir todo para desarrollo)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permitir cualquier origen
+    allow_credentials=True,
+    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permitir todos los headers
+)
+
 
 
 app.include_router(cabins.router, prefix="/api/v1")
