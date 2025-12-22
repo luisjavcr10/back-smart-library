@@ -16,6 +16,13 @@ class CabinStatusResponse(BaseModel):
     last_updated: Optional[datetime] = None
     wifi_rssi: int
 
+class CabinHistoryItem(BaseModel):
+    cabin_id: str
+    is_occupied: bool
+    last_updated: Optional[datetime] = None
+    wifi_rssi: int
+
+
 @router.get(
     "/cabins/{cabin_id}/status", 
     response_model=CabinStatusResponse,
@@ -57,7 +64,7 @@ def get_cabin_status(cabin_id: str, db: Session = Depends(get_db)):
 
 @router.get(
     "/cabins/{cabin_id}/history",
-    response_model=List[CabinStatusResponse], # Assuming we want to return the same schema or similar
+    response_model=List[CabinHistoryItem], 
     tags=["Cabins"],
     summary="Get cabin usage history",
     description="Retrieve historical sensor readings for a cabin."
@@ -66,4 +73,13 @@ def get_cabin_history(cabin_id: str, limit: int = 20, db: Session = Depends(get_
     readings = db.query(CabinReading).filter(CabinReading.cabin_id == cabin_id)\
                  .order_by(CabinReading.created_at.desc())\
                  .limit(limit).all()
-    return readings
+    
+    # Map DB objects to Pydantic models (automático, pero explícito para mayor claridad)
+    return [
+        CabinHistoryItem(
+            cabin_id=r.cabin_id,
+            is_occupied=r.is_cabin_occupied,
+            last_updated=r.created_at,
+            wifi_rssi=r.wifi_rssi
+        ) for r in readings
+    ]
