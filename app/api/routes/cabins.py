@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from app.db.session import get_db
 from app.models.cabin import CabinReading
 from pydantic import BaseModel
@@ -13,7 +13,7 @@ class CabinStatusResponse(BaseModel):
     cabin_id: str
     is_occupied: bool
     connection_status: str # "ONLINE", "OFFLINE", "NO_SIGNAL"
-    last_updated: datetime | None = None
+    last_updated: Optional[datetime] = None
     wifi_rssi: int
 
 @router.get(
