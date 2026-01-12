@@ -8,8 +8,14 @@ class Settings(BaseSettings):
 
     @field_validator("DATABASE_URL")
     def assemble_db_connection(cls, v: str | None) -> str:
-        if v and v.startswith("postgresql://"):
-            return v.replace("postgresql://", "postgresql+psycopg://", 1)
+        print(f"DEBUG: Validating DATABASE_URL value: {v}")
+        if v:
+            if v.startswith("postgres://"):
+                 v = v.replace("postgres://", "postgresql://", 1)
+            if v.startswith("postgresql://"):
+                modified = v.replace("postgresql://", "postgresql+psycopg://", 1)
+                print(f"DEBUG: Modified DATABASE_URL to: {modified.split('@')[-1]}")
+                return modified
         return v
     
     # MQTT Config
