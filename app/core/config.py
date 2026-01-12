@@ -1,9 +1,16 @@
 import os
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "IoT Cabinas API"
     DATABASE_URL: str = os.getenv("DATABASE_URL", "")
+
+    @field_validator("DATABASE_URL")
+    def assemble_db_connection(cls, v: str | None) -> str:
+        if v and v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+psycopg://", 1)
+        return v
     
     # MQTT Config
     MQTT_BROKER: str = os.getenv("MQTT_BROKER", "broker.emqx.io")
