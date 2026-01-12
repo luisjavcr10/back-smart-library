@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
@@ -7,7 +8,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL", "")
 
     @field_validator("DATABASE_URL")
-    def assemble_db_connection(cls, v: str | None) -> str:
+    def assemble_db_connection(cls, v: Optional[str]) -> str:
         print(f"DEBUG: Validating DATABASE_URL value: {v}")
         if v:
             if v.startswith("postgres://"):
